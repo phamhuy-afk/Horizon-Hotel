@@ -8,18 +8,23 @@ class Database {
     private static $instance = null;
     private $conn;
 
-    private $host = '127.0.0.1';
-    private $port = '3306';
-    private $dbname = 'quanlyks';
-    private $username = 'root';
-    private $password = '';
+    private $host = 'db';
+private $port = '3306';
+private $dbname = 'quanlyks';
+private $username = 'quanlyks_user';
+private $password;
+
+private function loadConfig() {
+    $this->host = getenv('DB_HOST') ?: $this->host;
+    $this->port = getenv('DB_PORT') ?: $this->port;
+    $this->dbname = getenv('DB_NAME') ?: $this->dbname;
+    $this->username = getenv('DB_USER') ?: $this->username;
+    $this->password = getenv('DB_PASSWORD');
+}
 
     private function __construct() {
+        $this->loadConfig();
         try {
-            // Đầu tiên kết nối để tạo CSDL nếu chưa có
-            $setup_conn = new PDO("mysql:host={$this->host};port={$this->port};charset=utf8mb4", $this->username, $this->password);
-            $setup_conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $setup_conn->exec("CREATE DATABASE IF NOT EXISTS `{$this->dbname}` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
             
             // Kết nối đến CSDL chính
             $dsn = "mysql:host={$this->host};port={$this->port};dbname={$this->dbname};charset=utf8mb4";
